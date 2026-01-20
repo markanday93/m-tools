@@ -3,12 +3,12 @@ on:
   push:
     branches: ["main"]
   workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -29,5 +29,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/markanday93/m-tools:latest
-            ghcr.io/markanday93/m-tools:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
